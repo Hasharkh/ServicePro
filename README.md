@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ServicePro
 
-## Getting Started
+ServicePro is a Next.js booking application for scheduling service appointments with a simple customer flow and an admin dashboard.
 
-First, run the development server:
+## What this project does
+
+- Lets users choose a service from available options.
+- Shows a date picker and service-specific available time slots.
+- Prevents slot conflicts by checking availability for the selected service and date.
+- Collects user name and email before showing a booking review panel.
+- Creates appointments in a Supabase backend.
+- Provides an admin dashboard for viewing all bookings.
+- Allows admins to mark appointments as completed.
+- Allows admins to delete completed appointments.
+- Keeps completed appointments from blocking future slot availability.
+
+## Key pages
+
+- `/` — public booking interface
+- `/admin` — protected admin dashboard
+
+## Backend and data
+
+- Uses Supabase server-side actions for booking storage.
+- Stores booking fields such as `user_name`, `user_email`, `service_type`, `booking_date`, `time_slot`, and `status`.
+- Prevents duplicate bookings for the same service, date, and time when the existing appointment is not completed.
+
+## Local setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Set required environment variables in a `.env.local` file:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+ADMIN_PASSWORD=your_admin_password
+```
+
+3. Run the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open the app at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+5. Access the admin dashboard at:
 
-## Learn More
+```
+http://localhost:3000/admin
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The admin page currently uses a password-based check and does not require a full auth flow.
+- Completed bookings are kept in the database but no longer reserve a time slot.
+- The app is implemented using Next.js App Router, React, and Tailwind CSS.
