@@ -1,27 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0B0E14;
+  --surface: #161B22;
+  --surface-light: #1C2230;
+  --border: #21262d;
+  --accent: #6366F1;
+  --emerald: #10B981;
+  --text-primary: #F0F6FC;
+  --text-secondary: #8b949e;
+  --text-muted: #4d5566;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: 'Montserrat', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center center;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(22, 27, 34, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(33, 38, 45, 0.8);
+}
+
+.glass-strong {
+  background: rgba(11, 14, 20, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #6366F1 0%, #818CF8 50%, #10B981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Bento card base */
+.bento-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.bento-card:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Selection colors */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: #F0F6FC;
+}
+
+/* react-day-picker custom overrides */
+.rdp {
+  --rdp-cell-size: 38px;
+  --rdp-accent-color: #6366F1;
+  --rdp-background-color: rgba(99, 102, 241, 0.15);
+  --rdp-accent-color-dark: #6366F1;
+  --rdp-background-color-dark: rgba(99, 102, 241, 0.15);
+  --rdp-outline: 2px solid #6366F1;
+  --rdp-outline-selected: 2px solid #6366F1;
+  margin: 0;
+}
+
+.rdp-months {
+  justify-content: center;
+}
+
+.rdp-day {
+  color: #F0F6FC;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 8px !important;
+  transition: all 0.2s ease;
+}
+
+.rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
+  background: rgba(99, 102, 241, 0.2);
+  color: #818CF8;
+}
+
+.rdp-day_selected {
+  background: #6366F1 !important;
+  color: white !important;
+  font-weight: 700;
+}
+
+.rdp-day_disabled {
+  color: #4d5566 !important;
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.rdp-day_outside {
+  opacity: 0.2;
+}
+
+.rdp-head_cell {
+  color: #6366F1;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rdp-caption_label {
+  color: #F0F6FC;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.rdp-nav_button {
+  color: #8b949e;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.rdp-nav_button:hover {
+  background: rgba(99, 102, 241, 0.2);
+  color: #6366F1;
+}
+
+.rdp-day_today:not(.rdp-day_selected) {
+  color: #10B981;
+  font-weight: 700;
 }
