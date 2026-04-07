@@ -7,7 +7,6 @@ import {
   Calendar,
   Clock,
   Mail,
-  Briefcase,
   CheckCircle2,
   Zap,
   ArrowLeft,

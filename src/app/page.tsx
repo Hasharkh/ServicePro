@@ -99,16 +99,16 @@ export default function BookingPage() {
         setSelectedDate(undefined);
         setSelectedSlot(null);
         setSelectedService("");
+        setFullyBookedDates([]);
         setName("");
         setEmail("");
         setStep("service");
-        getFullyBookedDates().then(setFullyBookedDates);
       } else {
         setModalOpen(false);
         setErrorMsg(result.error);
         // Refresh slots to reflect updated state
-        if (selectedDate) {
-          getBookedSlots(format(selectedDate, "yyyy-MM-dd")).then(setBookedSlots);
+        if (selectedDate && selectedService) {
+          getBookedSlots(format(selectedDate, "yyyy-MM-dd"), selectedService).then(setBookedSlots);
         }
       }
     });
