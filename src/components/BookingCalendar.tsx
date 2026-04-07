@@ -52,7 +52,7 @@ export default function BookingCalendar({
       />
 
       {/* Legend */}
-      <div className="flex items-center gap-5 mt-4 text-xs font-medium">
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-4 text-xs font-medium">
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-[#6366F1]" />
           <span className="text-slate-400">Selected</span>

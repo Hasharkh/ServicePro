@@ -180,3 +180,17 @@ body {
   color: #10B981;
   font-weight: 700;
 }
+
+@media (max-width: 390px) {
+  .rdp {
+    --rdp-cell-size: 34px;
+  }
+
+  .rdp-day {
+    font-size: 0.74rem;
+  }
+
+  .rdp-caption_label {
+    font-size: 0.86rem;
+  }
+}

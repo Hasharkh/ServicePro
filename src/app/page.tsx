@@ -122,16 +122,16 @@ export default function BookingPage() {
   return (
     <div className="min-h-screen">
       {/* Navbar */}
-      <nav className="glass sticky top-0 z-30 px-6 py-4 flex items-center justify-between">
+      <nav className="glass sticky top-0 z-30 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-[#6366F1] flex items-center justify-center">
             <Zap className="w-4 h-4 text-white" />
           </div>
-          <span className="font-black text-lg tracking-tight text-[#F0F6FC]">
+          <span className="font-black text-base sm:text-lg tracking-tight text-[#F0F6FC]">
             Service<span className="text-[#6366F1]">Pro</span>
           </span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500">
+        <div className="hidden min-[360px]:flex items-center gap-2 text-xs text-slate-500 whitespace-nowrap">
           <Shield className="w-3.5 h-3.5 text-[#10B981]" />
           <span>Secure Booking</span>
         </div>
@@ -143,7 +143,7 @@ export default function BookingPage() {
         </a>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-4 py-10">
+      <main className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-10">
         {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -154,7 +154,7 @@ export default function BookingPage() {
             <Star className="w-3 h-3" />
             Premium Scheduling
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-[#F0F6FC] leading-tight mb-3">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#F0F6FC] leading-tight mb-3">
             Book Your{" "}
             <span className="gradient-text">Appointment</span>
           </h1>
@@ -164,7 +164,8 @@ export default function BookingPage() {
         </motion.div>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-center gap-0 mb-10">
+        <div className="mb-10 px-2.5">
+          <div className="flex flex-nowrap max-[360px]:flex-wrap items-center justify-center gap-0 max-[360px]:gap-2">
           {(["service", "datetime", "details"] as Step[]).map((s, i) => (
             <div key={s} className="flex items-center">
               <button
@@ -173,7 +174,7 @@ export default function BookingPage() {
                   if (i === 1 && canProceedToDateTime) setStep("datetime");
                   if (i === 2 && canProceedToDateTime && canProceedToDetails) setStep("details");
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-wide transition-all ${
+                className={`flex items-center gap-1 min-[520px]:gap-2 px-2 min-[520px]:px-4 py-2 rounded-full text-[11px] min-[520px]:text-xs font-bold tracking-wide whitespace-nowrap transition-all ${
                   stepIndex[step] === i
                     ? "bg-[#6366F1] text-white shadow-[0_0_16px_rgba(99,102,241,0.5)]"
                     : stepIndex[step] > i
@@ -184,17 +185,18 @@ export default function BookingPage() {
                 <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] bg-white/10">
                   {stepIndex[step] > i ? "✓" : i + 1}
                 </span>
-                {s === "service" ? "Service" : s === "datetime" ? "Date & Time" : "Your Details"}
+                {s === "service" ? "Service" : s === "datetime" ? <><span className="min-[520px]:hidden">Date</span><span className="hidden min-[520px]:inline">Date & Time</span></> : <><span className="min-[520px]:hidden">Details</span><span className="hidden min-[520px]:inline">Your Details</span></>}
               </button>
               {i < 2 && (
                 <div
-                  className={`w-8 h-px mx-1 transition-all ${
+                  className={`block max-[360px]:hidden w-4 min-[520px]:w-8 h-px mx-1 transition-all ${
                     stepIndex[step] > i ? "bg-[#10B981]/40" : "bg-[#21262d]"
                   }`}
                 />
               )}
             </div>
           ))}
+          </div>
         </div>
 
         {/* Success / Error toast */}
@@ -238,7 +240,7 @@ export default function BookingPage() {
                 transition={{ duration: 0.3 }}
                 className="lg:col-span-3"
               >
-                <div className="bento-card p-6">
+                <div className="bento-card p-4 sm:p-6">
                   <div className="flex items-center gap-2 mb-6">
                     <Briefcase className="w-4 h-4 text-[#6366F1]" />
                     <h2 className="font-bold text-[#F0F6FC]">Select a Service</h2>
@@ -296,7 +298,7 @@ export default function BookingPage() {
                 className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-5"
               >
                 {/* Calendar Tile */}
-                <div className="bento-card p-6">
+                <div className="bento-card p-4 sm:p-6">
                   <div className="flex items-center gap-2 mb-5">
                     <Calendar className="w-4 h-4 text-[#6366F1]" />
                     <h2 className="font-bold text-[#F0F6FC]">Pick a Date</h2>
@@ -334,7 +336,7 @@ export default function BookingPage() {
                 </div>
 
                 {/* Navigation */}
-                <div className="md:col-span-2 flex justify-between">
+                <div className="md:col-span-2 flex flex-col min-[360px]:flex-row gap-2.5 min-[360px]:gap-0 justify-between">
                   <button
                     onClick={() => setStep("service")}
                     className="px-5 py-2.5 rounded-xl border border-[#21262d] text-slate-400 hover:text-white hover:border-[#30363d] text-sm font-medium transition-all"
@@ -365,7 +367,7 @@ export default function BookingPage() {
                 className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-5"
               >
                 {/* Form */}
-                <div className="bento-card p-6">
+                <div className="bento-card p-4 sm:p-6">
                   <div className="flex items-center gap-2 mb-5">
                     <User className="w-4 h-4 text-[#6366F1]" />
                     <h2 className="font-bold text-[#F0F6FC]">Your Details</h2>
@@ -400,7 +402,7 @@ export default function BookingPage() {
                 </div>
 
                 {/* Summary Sidebar */}
-                <div className="bento-card p-6 bg-[#0d1117] border-[#6366f120]">
+                <div className="bento-card p-4 sm:p-6 bg-[#0d1117] border-[#6366f120]">
                   <h3 className="text-xs font-semibold tracking-widest text-[#6366F1] uppercase mb-4">
                     Appointment Summary
                   </h3>
@@ -434,7 +436,7 @@ export default function BookingPage() {
                 </div>
 
                 {/* Navigation */}
-                <div className="md:col-span-2 flex justify-between">
+                <div className="md:col-span-2 flex flex-col min-[360px]:flex-row gap-2.5 min-[360px]:gap-0 justify-between">
                   <button
                     onClick={() => setStep("datetime")}
                     className="px-5 py-2.5 rounded-xl border border-[#21262d] text-slate-400 hover:text-white hover:border-[#30363d] text-sm font-medium transition-all"

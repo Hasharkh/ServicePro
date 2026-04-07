@@ -82,16 +82,17 @@ export default function ConfirmationModal({
                 <div className="absolute top-24 right-8 w-32 h-32 bg-[#6366F1]/10 rounded-full blur-3xl pointer-events-none" />
 
                 {[
-                  { icon: User, label: "Name", value: data.name },
-                  { icon: Mail, label: "Email", value: data.email },
+                  { icon: User, label: "Name", value: data.name, valueClassName: "break-words" },
+                  { icon: Mail, label: "Email", value: data.email, valueClassName: "break-all" },
                   {
                     icon: Briefcase,
                     label: "Service",
                     value: SERVICE_LABELS[data.service] || data.service,
+                    valueClassName: "break-words",
                   },
-                  { icon: Calendar, label: "Date", value: formattedDate },
-                  { icon: Clock, label: "Time", value: data.slot },
-                ].map(({ icon: Icon, label, value }) => (
+                  { icon: Calendar, label: "Date", value: formattedDate, valueClassName: "break-words" },
+                  { icon: Clock, label: "Time", value: data.slot, valueClassName: "break-words" },
+                ].map(({ icon: Icon, label, value, valueClassName }) => (
                   <div
                     key={label}
                     className="flex items-start gap-4 p-4 rounded-xl bg-[#0B0E14]/60 border border-[#21262d]"
@@ -103,7 +104,9 @@ export default function ConfirmationModal({
                       <p className="text-[10px] font-semibold tracking-widest text-slate-500 uppercase mb-0.5">
                         {label}
                       </p>
-                      <p className="text-sm font-semibold text-[#F0F6FC]">{value}</p>
+                      <p className={`text-sm font-semibold text-[#F0F6FC] leading-snug ${valueClassName}`}>
+                        {value}
+                      </p>
                     </div>
                   </div>
                 ))}
