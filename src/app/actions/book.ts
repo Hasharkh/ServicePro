@@ -86,9 +86,9 @@ export async function createBooking(formData: {
       return { success: false, error: "Invalid time slot selected." };
     }
 
-    const client = supabase();
+    const admin = supabaseAdmin();
 
-    const { data: existing, error: checkError } = await client
+    const { data: existing, error: checkError } = await admin
       .from("bookings")
       .select("id")
       .eq("booking_date", booking_date)
@@ -108,7 +108,7 @@ export async function createBooking(formData: {
       };
     }
 
-    const { error: insertError } = await client.from("bookings").insert({
+    const { error: insertError } = await admin.from("bookings").insert({
       user_name,
       user_email,
       service_type,

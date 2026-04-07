@@ -11,18 +11,18 @@ export const metadata = {
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams: { password?: string };
+  searchParams: { password?: string; error?: string };
 }) {
-  const adminPassword = process.env.ADMIN_PASSWORD || "servicepro-admin-2024";
+  const adminPassword = (process.env.ADMIN_PASSWORD || "servicepro-admin-2024").trim();
   const cookieStore = cookies();
   const authCookie = cookieStore.get("admin_auth");
 
   const isAuthenticated =
     authCookie?.value === adminPassword ||
-    searchParams?.password === adminPassword;
+    searchParams?.password?.trim() === adminPassword;
 
   if (!isAuthenticated) {
-    return <AdminLoginPage />;
+    return <AdminLoginPage hasError={searchParams?.error === "1"} />;
   }
 
   const bookings = await getAllBookings();
@@ -30,7 +30,7 @@ export default async function AdminPage({
   return <AdminView bookings={bookings} />;
 }
 
-function AdminLoginPage() {
+function AdminLoginPage({ hasError = false }: { hasError?: boolean }) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="bento-card p-8 w-full max-w-md">
@@ -56,16 +56,23 @@ function AdminLoginPage() {
           </p>
         </div>
 
+        {hasError && (
+          <div className="mb-4 rounded-xl border border-[#f43f5e40] bg-[#f43f5e15] px-4 py-3 text-sm font-medium text-[#F43F5E]">
+            Incorrect password. Please try again.
+          </div>
+        )}
+
         <form
           action={async (formData: FormData) => {
             "use server";
-            const pw = formData.get("password") as string;
-            const adminPw = process.env.ADMIN_PASSWORD || "servicepro-admin-2024";
+            const pw = String(formData.get("password") || "").trim();
+            const adminPw = (process.env.ADMIN_PASSWORD || "servicepro-admin-2024").trim();
             if (pw === adminPw) {
-              const { cookies } = await import("next/headers");
-              (await cookies()).set("admin_auth", pw, {
+              cookies().set("admin_auth", pw, {
                 httpOnly: true,
                 sameSite: "strict",
+                secure: process.env.NODE_ENV === "production",
+                path: "/",
                 maxAge: 60 * 60 * 8, // 8 hours
               });
               redirect("/admin");
