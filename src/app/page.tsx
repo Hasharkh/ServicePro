@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { Calendar, Clock, CheckCircle2, Zap, Shield, Star, Briefcase, User } from "lucide-react";
@@ -32,6 +32,7 @@ export default function BookingPage() {
   const [isPending, startTransition] = useTransition();
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const slotsRequestIdRef = useRef(0);
 
   // Form fields
   const [name, setName] = useState("");
@@ -49,7 +50,7 @@ export default function BookingPage() {
 
   // Load service-specific booked slots when date or service changes
   useEffect(() => {
-    let isMounted = true;
+    const requestId = ++slotsRequestIdRef.current;
 
     if (!selectedDate || !selectedService) {
       setBookedSlots([]);
@@ -60,26 +61,24 @@ export default function BookingPage() {
 
     setIsLoadingSlots(true);
     setSelectedSlot(null);
+    setErrorMsg("");
 
     (async () => {
       try {
         const slots = await getBookedSlots(format(selectedDate, "yyyy-MM-dd"), selectedService);
-        if (!isMounted) return;
+        if (slotsRequestIdRef.current !== requestId) return;
         setBookedSlots(slots);
+        setErrorMsg("");
       } catch {
-        if (!isMounted) return;
+        if (slotsRequestIdRef.current !== requestId) return;
         setBookedSlots([]);
         setErrorMsg("Could not load time slots. Please try again.");
       } finally {
-        if (isMounted) {
+        if (slotsRequestIdRef.current === requestId) {
           setIsLoadingSlots(false);
         }
       }
     })();
-
-    return () => {
-      isMounted = false;
-    };
   }, [selectedDate, selectedService]);
 
   useEffect(() => {
