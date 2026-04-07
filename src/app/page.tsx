@@ -116,13 +116,21 @@ export default function BookingPage() {
     setErrorMsg("");
 
     startTransition(async () => {
-      const result = await createBooking({
-        user_name: name,
-        user_email: email,
-        service_type: selectedService,
-        booking_date: format(selectedDate, "yyyy-MM-dd"),
-        time_slot: selectedSlot,
-      });
+      let result;
+
+      try {
+        result = await createBooking({
+          user_name: name,
+          user_email: email,
+          service_type: selectedService,
+          booking_date: format(selectedDate, "yyyy-MM-dd"),
+          time_slot: selectedSlot,
+        });
+      } catch {
+        setModalOpen(false);
+        setErrorMsg("Booking could not be completed. Please try again.");
+        return;
+      }
 
       if (result.success) {
         setModalOpen(false);

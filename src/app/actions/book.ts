@@ -71,70 +71,71 @@ export async function createBooking(formData: {
   booking_date: string;
   time_slot: string;
 }): Promise<BookingResult> {
-  const { user_name, user_email, service_type, booking_date, time_slot } = formData;
+  try {
+    const { user_name, user_email, service_type, booking_date, time_slot } = formData;
 
-  // Server-side validation
-  if (!user_name || !user_email || !service_type || !booking_date || !time_slot) {
-    return { success: false, error: "All fields are required." };
-  }
+    if (!user_name || !user_email || !service_type || !booking_date || !time_slot) {
+      return { success: false, error: "All fields are required." };
+    }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_email)) {
-    return { success: false, error: "Please enter a valid email address." };
-  }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_email)) {
+      return { success: false, error: "Please enter a valid email address." };
+    }
 
-  if (!ALL_TIME_SLOTS.includes(time_slot)) {
-    return { success: false, error: "Invalid time slot selected." };
-  }
+    if (!ALL_TIME_SLOTS.includes(time_slot)) {
+      return { success: false, error: "Invalid time slot selected." };
+    }
 
-  const admin = supabaseAdmin();
+    const admin = supabaseAdmin();
 
-  // Check for existing booking (double-booking prevention)
-  const { data: existing, error: checkError } = await admin
-    .from("bookings")
-    .select("id")
-    .eq("booking_date", booking_date)
-    .eq("time_slot", time_slot)
-    .neq("status", "completed")
-    .maybeSingle();
+    const { data: existing, error: checkError } = await admin
+      .from("bookings")
+      .select("id")
+      .eq("booking_date", booking_date)
+      .eq("time_slot", time_slot)
+      .neq("status", "completed")
+      .maybeSingle();
 
-  if (checkError) {
-    console.error("Check error:", checkError);
-    return { success: false, error: "Could not verify slot availability. Please try again." };
-  }
+    if (checkError) {
+      console.error("Check error:", checkError);
+      return { success: false, error: "Could not verify slot availability. Please try again." };
+    }
 
-  if (existing) {
-    return {
-      success: false,
-      error: "This slot was just taken! Please choose another time.",
-    };
-  }
-
-  // Insert the booking
-  const { error: insertError } = await admin.from("bookings").insert({
-    user_name,
-    user_email,
-    service_type,
-    booking_date,
-    time_slot,
-    status: "confirmed",
-  });
-
-  if (insertError) {
-    // Handle unique constraint violation (race condition safety net)
-    if (insertError.code === "23505") {
+    if (existing) {
       return {
         success: false,
-        error: "This slot was just taken by someone else. Please choose another time.",
+        error: "This slot was just taken! Please choose another time.",
       };
     }
-    console.error("Insert error:", insertError);
-    return { success: false, error: "Failed to create booking. Please try again." };
+
+    const { error: insertError } = await admin.from("bookings").insert({
+      user_name,
+      user_email,
+      service_type,
+      booking_date,
+      time_slot,
+      status: "confirmed",
+    });
+
+    if (insertError) {
+      if (insertError.code === "23505") {
+        return {
+          success: false,
+          error: "This slot was just taken by someone else. Please choose another time.",
+        };
+      }
+      console.error("Insert error:", insertError);
+      return { success: false, error: "Failed to create booking. Please try again." };
+    }
+
+    revalidatePath("/");
+    revalidatePath("/admin");
+
+    return { success: true, message: `Booking confirmed for ${booking_date} at ${time_slot}!` };
+  } catch (error) {
+    console.error("Unexpected booking error:", error);
+    return { success: false, error: "Booking could not be completed. Please try again." };
   }
-
-  revalidatePath("/");
-  revalidatePath("/admin");
-
-  return { success: true, message: `Booking confirmed for ${booking_date} at ${time_slot}!` };
 }
 
 export async function markBookingCompleted(formData: FormData) {
