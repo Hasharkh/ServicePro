@@ -121,15 +121,31 @@ body {
   font-family: var(--font-montserrat), sans-serif;
   font-size: 0.8rem;
   font-weight: 500;
-  border-radius: 8px !important;
+  transition: all 0.2s ease;
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  padding: 0;
+  text-align: center;
+}
+
+.rdp-day_button {
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
   transition: all 0.2s ease;
 }
 
-.rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
+.rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) .rdp-day_button {
   background: rgba(99, 102, 241, 0.2);
   color: #818CF8;
 }
 
+.rdp-day_selected .rdp-day_button,
 .rdp-day_selected {
   background: #6366F1 !important;
   color: white !important;
