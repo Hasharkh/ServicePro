@@ -1,6 +1,6 @@
 "use server";
 
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 import { ALL_TIME_SLOTS } from "@/lib/constants";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -11,20 +11,25 @@ export type BookingResult =
   | { success: false; error: string };
 
 export async function getBookedSlots(date: string, service_type: string): Promise<string[]> {
-  const admin = supabaseAdmin();
-  const { data, error } = await admin
-    .from("bookings")
-    .select("time_slot")
-    .eq("booking_date", date)
-    .eq("service_type", service_type)
-    .neq("status", "completed");
+  try {
+    const client = supabase();
+    const { data, error } = await client
+      .from("bookings")
+      .select("time_slot")
+      .eq("booking_date", date)
+      .eq("service_type", service_type)
+      .neq("status", "completed");
 
-  if (error) {
-    console.error("Error fetching booked slots:", error);
+    if (error) {
+      console.error("Error fetching booked slots:", error);
+      return [];
+    }
+
+    return (data ?? []).map((booking) => booking.time_slot);
+  } catch (error) {
+    console.error("Unexpected error fetching booked slots:", error);
     return [];
   }
-
-  return (data ?? []).map((b) => b.time_slot);
 }
 
 export async function getFullyBookedDates(service_type: string): Promise<string[]> {
@@ -32,28 +37,31 @@ export async function getFullyBookedDates(service_type: string): Promise<string[
     return [];
   }
 
-  const admin = supabaseAdmin();
-  const { data, error } = await admin
-    .from("bookings")
-    .select("booking_date, time_slot")
-    .eq("service_type", service_type)
-    .neq("status", "completed");
+  try {
+    const client = supabase();
+    const { data, error } = await client
+      .from("bookings")
+      .select("booking_date, time_slot")
+      .eq("service_type", service_type)
+      .neq("status", "completed");
 
-  if (error) {
-    console.error("Error fetching booked dates:", error);
+    if (error) {
+      console.error("Error fetching booked dates:", error);
+      return [];
+    }
+
+    const dateCounts: Record<string, number> = {};
+    for (const row of data ?? []) {
+      dateCounts[row.booking_date] = (dateCounts[row.booking_date] || 0) + 1;
+    }
+
+    return Object.entries(dateCounts)
+      .filter(([, count]) => count >= ALL_TIME_SLOTS.length)
+      .map(([date]) => date);
+  } catch (error) {
+    console.error("Unexpected error fetching booked dates:", error);
     return [];
   }
-
-  // Count slots per date
-  const dateCounts: Record<string, number> = {};
-  for (const row of data ?? []) {
-    dateCounts[row.booking_date] = (dateCounts[row.booking_date] || 0) + 1;
-  }
-
-  // A day is "fully booked" when all slots are taken
-  return Object.entries(dateCounts)
-    .filter(([, count]) => count >= ALL_TIME_SLOTS.length)
-    .map(([date]) => date);
 }
 
 export async function createBooking(formData: {
