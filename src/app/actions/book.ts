@@ -128,8 +128,17 @@ export async function createBooking(formData: {
       return { success: false, error: "Failed to create booking. Please try again." };
     }
 
-    revalidatePath("/");
-    revalidatePath("/admin");
+    try {
+      revalidatePath("/");
+    } catch (error) {
+      console.error("Could not revalidate booking page:", error);
+    }
+
+    try {
+      revalidatePath("/admin");
+    } catch (error) {
+      console.error("Could not revalidate admin page:", error);
+    }
 
     return { success: true, message: `Booking confirmed for ${booking_date} at ${time_slot}!` };
   } catch (error) {
@@ -176,17 +185,22 @@ export async function deleteBooking(formData: FormData) {
 }
 
 export async function getAllBookings() {
-  const admin = supabaseAdmin();
-  const { data, error } = await admin
-    .from("bookings")
-    .select("*")
-    .order("booking_date", { ascending: true })
-    .order("time_slot", { ascending: true });
+  try {
+    const admin = supabaseAdmin();
+    const { data, error } = await admin
+      .from("bookings")
+      .select("*")
+      .order("booking_date", { ascending: true })
+      .order("time_slot", { ascending: true });
 
-  if (error) {
-    console.error("Error fetching all bookings:", error);
+    if (error) {
+      console.error("Error fetching all bookings:", error);
+      return [];
+    }
+
+    return data ?? [];
+  } catch (error) {
+    console.error("Unexpected error fetching all bookings:", error);
     return [];
   }
-
-  return data ?? [];
 }

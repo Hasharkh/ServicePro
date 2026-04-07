@@ -246,7 +246,7 @@ export default function BookingPage() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="fixed top-6 right-6 z-50 flex items-center gap-3 px-6 py-3.5 rounded-xl bg-[#10b98115] border border-[#10b98140] text-[#10B981] text-sm font-semibold shadow-lg max-w-lg w-[min(95vw,420px)]"
+              className="fixed top-20 sm:top-24 right-3 sm:right-6 z-50 flex items-center gap-3 px-6 py-3.5 rounded-xl bg-[#10b98115] border border-[#10b98140] text-[#10B981] text-sm font-semibold shadow-lg max-w-lg w-[min(95vw,420px)]"
             >
               <CheckCircle2 className="w-5 h-5" />
               {successMsg}
@@ -258,7 +258,7 @@ export default function BookingPage() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="fixed top-6 right-6 z-50 flex items-center gap-3 px-6 py-3.5 rounded-xl bg-[#f43f5e15] border border-[#f43f5e40] text-[#F43F5E] text-sm font-semibold shadow-lg max-w-lg w-[min(95vw,420px)]"
+              className="fixed top-20 sm:top-24 right-3 sm:right-6 z-50 flex items-center gap-3 px-6 py-3.5 rounded-xl bg-[#f43f5e15] border border-[#f43f5e40] text-[#F43F5E] text-sm font-semibold shadow-lg max-w-lg w-[min(95vw,420px)]"
             >
               ⚠️ {errorMsg}
               <button onClick={() => setErrorMsg("")} className="ml-2 text-xs text-[#F43F5E]/60 hover:text-[#F43F5E]">✕</button>
