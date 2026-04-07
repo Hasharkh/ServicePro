@@ -65,8 +65,20 @@ export default function BookingPage() {
 
     (async () => {
       try {
-        const slots = await getBookedSlots(format(selectedDate, "yyyy-MM-dd"), selectedService);
-        if (slotsRequestIdRef.current !== requestId) return;
+        let slots: string[] | null = null;
+
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          try {
+            slots = await getBookedSlots(format(selectedDate, "yyyy-MM-dd"), selectedService);
+            break;
+          } catch {
+            if (attempt === 1) {
+              throw new Error("slot-load-failed");
+            }
+          }
+        }
+
+        if (slotsRequestIdRef.current !== requestId || slots === null) return;
         setBookedSlots(slots);
         setErrorMsg("");
       } catch {
