@@ -13,7 +13,7 @@ export default async function AdminPage({
 }: {
   searchParams: { password?: string; error?: string };
 }) {
-  const adminPassword = (process.env.ADMIN_PASSWORD || "servicepro-admin-2024").trim();
+  const adminPassword = (process.env.ADMIN_PASSWORD || "servicepro-admin").trim();
   const cookieStore = cookies();
   const authCookie = cookieStore.get("admin_auth");
 
@@ -66,7 +66,7 @@ function AdminLoginPage({ hasError = false }: { hasError?: boolean }) {
           action={async (formData: FormData) => {
             "use server";
             const pw = String(formData.get("password") || "").trim();
-            const adminPw = (process.env.ADMIN_PASSWORD || "servicepro-admin-2024").trim();
+            const adminPw = (process.env.ADMIN_PASSWORD || "servicepro-admin").trim();
             if (pw === adminPw) {
               cookies().set("admin_auth", pw, {
                 httpOnly: true,
