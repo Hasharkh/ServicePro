@@ -164,7 +164,6 @@ export async function markBookingCompleted(formData: FormData) {
   }
 
   revalidatePath("/admin");
-  redirect("/admin");
 }
 
 export async function deleteBooking(formData: FormData) {
@@ -181,7 +180,6 @@ export async function deleteBooking(formData: FormData) {
   }
 
   revalidatePath("/admin");
-  redirect("/admin");
 }
 
 export async function getAllBookings() {

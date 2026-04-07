@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
 import {
@@ -29,6 +30,27 @@ const SERVICE_ICONS: Record<string, string> = {
 };
 
 export default function AdminView({ bookings }: AdminViewProps) {
+  const [pendingId, setPendingId] = useState<string | null>(null);
+
+  const handleMarkCompleted = async (formData: FormData) => {
+    const id = formData.get("bookingId") as string;
+    setPendingId(id);
+    try {
+      await markBookingCompleted(formData);
+    } finally {
+      setPendingId(null);
+    }
+  };
+
+  const handleDelete = async (formData: FormData) => {
+    const id = formData.get("bookingId") as string;
+    setPendingId(id);
+    try {
+      await deleteBooking(formData);
+    } finally {
+      setPendingId(null);
+    }
+  };
   const today = format(new Date(), "yyyy-MM-dd");
   const upcoming = bookings.filter((b) => b.status !== "completed");
   const completed = bookings.filter((b) => b.status === "completed");
@@ -225,23 +247,25 @@ export default function AdminView({ bookings }: AdminViewProps) {
                             </span>
 
                             {booking.status !== "completed" ? (
-                              <form action={markBookingCompleted} className="mt-1">
+                              <form action={handleMarkCompleted} className="mt-1">
                                 <input type="hidden" name="bookingId" value={booking.id} />
                                 <button
                                   type="submit"
-                                  className="text-[11px] font-semibold text-[#6366F1] hover:text-[#818CF8] transition-colors"
+                                  disabled={pendingId === booking.id}
+                                  className="text-[11px] font-semibold text-[#6366F1] hover:text-[#818CF8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  Mark completed
+                                  {pendingId === booking.id ? "Processing..." : "Mark completed"}
                                 </button>
                               </form>
                             ) : (
-                              <form action={deleteBooking} className="mt-1">
+                              <form action={handleDelete} className="mt-1">
                                 <input type="hidden" name="bookingId" value={booking.id} />
                                 <button
                                   type="submit"
-                                  className="text-[11px] font-semibold text-[#F43F5E] hover:text-[#FB7185] transition-colors"
+                                  disabled={pendingId === booking.id}
+                                  className="text-[11px] font-semibold text-[#F43F5E] hover:text-[#FB7185] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  Delete completed
+                                  {pendingId === booking.id ? "Deleting..." : "Delete completed"}
                                 </button>
                               </form>
                             )}
