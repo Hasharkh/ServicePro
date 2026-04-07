@@ -3,7 +3,6 @@
 import { supabase, supabaseAdmin } from "@/lib/supabase";
 import { ALL_TIME_SLOTS } from "@/lib/constants";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 
 export type BookingResult =
