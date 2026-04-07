@@ -49,18 +49,37 @@ export default function BookingPage() {
 
   // Load service-specific booked slots when date or service changes
   useEffect(() => {
+    let isMounted = true;
+
     if (!selectedDate || !selectedService) {
       setBookedSlots([]);
       setSelectedSlot(null);
+      setIsLoadingSlots(false);
       return;
     }
 
     setIsLoadingSlots(true);
     setSelectedSlot(null);
-    getBookedSlots(format(selectedDate, "yyyy-MM-dd"), selectedService).then((slots) => {
-      setBookedSlots(slots);
-      setIsLoadingSlots(false);
-    });
+
+    (async () => {
+      try {
+        const slots = await getBookedSlots(format(selectedDate, "yyyy-MM-dd"), selectedService);
+        if (!isMounted) return;
+        setBookedSlots(slots);
+      } catch {
+        if (!isMounted) return;
+        setBookedSlots([]);
+        setErrorMsg("Could not load time slots. Please try again.");
+      } finally {
+        if (isMounted) {
+          setIsLoadingSlots(false);
+        }
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+    };
   }, [selectedDate, selectedService]);
 
   useEffect(() => {
