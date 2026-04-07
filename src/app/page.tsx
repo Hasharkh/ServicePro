@@ -28,6 +28,7 @@ export default function BookingPage() {
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
   const [fullyBookedDates, setFullyBookedDates] = useState<string[]>([]);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+  const [slotsLoadError, setSlotsLoadError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [successMsg, setSuccessMsg] = useState("");
@@ -56,12 +57,13 @@ export default function BookingPage() {
       setBookedSlots([]);
       setSelectedSlot(null);
       setIsLoadingSlots(false);
+      setSlotsLoadError(false);
       return;
     }
 
     setIsLoadingSlots(true);
     setSelectedSlot(null);
-    setErrorMsg("");
+    setSlotsLoadError(false);
 
     (async () => {
       try {
@@ -80,11 +82,11 @@ export default function BookingPage() {
 
         if (slotsRequestIdRef.current !== requestId || slots === null) return;
         setBookedSlots(slots);
-        setErrorMsg("");
+        setSlotsLoadError(false);
       } catch {
         if (slotsRequestIdRef.current !== requestId) return;
         setBookedSlots([]);
-        setErrorMsg("Could not load time slots. Please try again.");
+        setSlotsLoadError(true);
       } finally {
         if (slotsRequestIdRef.current === requestId) {
           setIsLoadingSlots(false);
@@ -354,6 +356,11 @@ export default function BookingPage() {
                     <div className="flex flex-col items-center justify-center h-40 text-slate-600 text-sm gap-2">
                       <Calendar className="w-8 h-8 opacity-30" />
                       <span>Choose a date to see available times</span>
+                    </div>
+                  ) : slotsLoadError ? (
+                    <div className="flex flex-col items-center justify-center h-40 text-[#F43F5E] text-sm gap-2">
+                      <Clock className="w-8 h-8 opacity-70" />
+                      <span>Could not load time slots. Please try another date.</span>
                     </div>
                   ) : (
                     <TimeSlotPicker
